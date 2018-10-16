@@ -5,10 +5,15 @@ type BlockChain struct {
 	Blocks []*Block
 }
 
+
+//创建创世块
+func GenesisBlock() *Block {
+	return NewBlock("222222222",[]byte{})
+}
 //创建区块链
-func NewBlockChain(data string)*BlockChain  {
+func NewBlockChain()*BlockChain  {
 	// 把创世块，作为区块链的第一个区块
-	genesisBlock:=GenesisBlock(data,[]byte{})
+	genesisBlock:=GenesisBlock()
 	return &BlockChain{[]*Block{genesisBlock}}
 
 }

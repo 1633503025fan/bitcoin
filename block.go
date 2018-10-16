@@ -1,7 +1,6 @@
 package main
 
 import (
-	"crypto/sha256"
 	"time"
 	"encoding/binary"
 	"bytes"
@@ -42,15 +41,18 @@ func NewBlock(data string,prevHash []byte)*Block  {
 		Hash:[]byte{},//TODO
 		Data:[]byte(data),
 	}
-	block.Hash=block.SetHash()
+	//block.Hash=block.SetHash()
+	//创建一个pow对象
+	pow:=NewProofOfWork(&block)
+	//查找随机数，不停进行哈希运算
+	hash,nonce:=pow.Run()
+	block.Hash=hash
+	block.Nonce=nonce
 	return &block
 
 }
 
-//创建创世块
-func GenesisBlock(data string,prevHash []byte) *Block {
-	return NewBlock(data,[]byte{})
-}
+/*
 //生成哈希
 func (block *Block)SetHash()[]byte  {
 	//拼接当前区块的数据
@@ -64,6 +66,7 @@ func (block *Block)SetHash()[]byte  {
 	blockByteInfo=append(blockByteInfo,uint64ToByte(block.Nonce)...)
 	blockByteInfo=append(blockByteInfo,block.Data...)
 	*/
+	/*
 	tmp:=[][]byte{
 		uint64ToByte(block.Version),
 		block.prevHash,
@@ -77,6 +80,7 @@ func (block *Block)SetHash()[]byte  {
 	hash:=sha256.Sum256(blockByteInfo)
 	return hash[:]
 }
+*/
 
 //辅助函数
 func uint64ToByte(data uint64) []byte {
