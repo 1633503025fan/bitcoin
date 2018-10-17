@@ -5,6 +5,9 @@ import (
 	"encoding/binary"
 	"bytes"
 	"log"
+	"encoding/gob"
+	"os"
+
 )
 //2. 升级版（区块字段完整）
 //补充区块字段
@@ -15,7 +18,7 @@ type Block struct {
 	//版本号
 	Version uint64
 	//前区块哈希值
-	prevHash []byte
+	PrevHash []byte
 	//梅克尔根Merkle,是一个哈希值
 	MerkleRoot []byte
 	//时间戳
@@ -33,7 +36,7 @@ type Block struct {
 func NewBlock(data string,prevHash []byte)*Block  {
 	block:= Block{
 		Version:00,
-		prevHash:prevHash,
+		PrevHash:prevHash,
 		MerkleRoot:[]byte{},
 		TimeStamp:uint64(time.Now().Unix()),
 		Difficulty:100,//先随便写
@@ -50,6 +53,39 @@ func NewBlock(data string,prevHash []byte)*Block  {
 	block.Nonce=nonce
 	return &block
 
+}
+
+//序列化
+func (block *Block)Serialize()[]byte  {
+	//编码的数据放到buffer
+	var buffer bytes.Buffer
+	//使用gob进行序列化（编码）得到字节流
+		//1、定义一个编码器
+		//2、使用编码器编码
+	//func NewEncoder(w io.Writer) *Encoder {
+	encode:=gob.NewEncoder(&buffer)
+	//func (enc *Encoder) Encode(e interface{}) error {
+	err:=encode.Encode(&block)
+	if err!=nil{
+		log.Panic("编码出错")
+		os.Exit(1)
+	}
+	return buffer.Bytes()
+}
+//反序列化
+func Deserialize(data []byte) Block {
+	//使用gob进行反序列化（解码）
+	//1、定义一个解码器
+	//2、使用解码器解码
+	//func NewDecoder(r io.Reader) *Decoder {
+	decoder:=gob.NewDecoder(bytes.NewReader(data))
+	var block Block
+	err:=decoder.Decode(&block)
+	if err!=nil{
+		log.Panic("解码出错")
+		os.Exit(1)
+	}
+	return block
 }
 
 /*

@@ -46,7 +46,7 @@ func (pow *ProofOfWork) Run() ([]byte,uint64) {
 		//1、拼接数据（区块的数据，还有不断变化的随机数）
 		tmp:=[][]byte{
 			uint64ToByte(pow.block.Version),
-			pow.block.prevHash,
+			pow.block.PrevHash,
 			pow.block.MerkleRoot,
 			uint64ToByte(pow.block.TimeStamp),
 			uint64ToByte(pow.block.Difficulty),
